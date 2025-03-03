@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Station Dashboard</title>
+    <!-- ملف CSS العام -->
+    <link rel="stylesheet" href="styles/global.css">
+    <!-- ملف CSS الخاص بالصفحة الرئيسية -->
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <!-- مكتبة Canvas Gauges -->
+    <script src="https://cdn.rawgit.com/Mikhus/canvas-gauges/gh-pages/download/2.1.7/all/gauge.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Power Station Monitoring System</h1>
+        <div class="overall-gauge-container">
+            <h2>Overall System Status</h2>
+            <div class="gauge-container">
+                <canvas id="overallGauge"></canvas>
+            </div>
+            <div class="warning-light" id="overallWarningLight"></div>
+            <p>Overall Value: <span id="overallValue">0</span></p>
+        </div>
+    </div>
+    
+    <!-- ملف JS العام -->
+    <script src="scripts/global.js"></script>
+    <!-- ملف JS الخاص بالصفحة الرئيسية -->
+    <script src="scripts/dashboard.js"></script>
+</body>
+</html>

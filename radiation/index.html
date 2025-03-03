@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiation Monitoring</title>
+    <!-- ملف CSS العام -->
+    <link rel="stylesheet" href="../styles/global.css">
+    <!-- ملف CSS الخاص بالإشعاع -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- مكتبة Canvas Gauges -->
+    <script src="https://cdn.rawgit.com/Mikhus/canvas-gauges/gh-pages/download/2.1.7/all/gauge.min.js"></script>
+</head>
+<body>
+    <div class="gauge-container">
+        <canvas id="radiationGauge"></canvas>
+    </div>
+    <div class="warning-light" id="radiationWarningLight"></div>
+    <button class="control-button" id="controlButton" disabled>Control</button>
+
+    <!-- ملف JS العام -->
+    <script src="../scripts/global.js"></script>
+    <!-- ملف JS الخاص بالإشعاع -->
+    <script src="scripts/scripts.js"></script>
+</body>
+</html>

@@ -37,18 +37,18 @@ const radiationGauge = new RadialGauge({
 }).draw();
 
 // Function to update the radiation gauge value
-function updateRadiation(value) {
-    radiationGauge.value = value;
-
-    // Check if radiation reaches 75 mSv
-    const radiationWarningLight = document.getElementById('radiationWarningLight');
-    if (value >= 75) {
-        radiationWarningLight.classList.add('on');
-        document.getElementById('controlButton').disabled = false;
+async function updateRadiationFromAPI() {
+    const sensorId = 2; 
+    const value = await fetchSensorData(sensorId);
+    
+    if (value !== null) {
+        updateRadiation(value);
     } else {
-        radiationWarningLight.classList.remove('on');
+        const simulatedValue = simulateValue(0, 100);
+        updateRadiation(simulatedValue);
     }
 }
+
 
 // Simulate dynamic radiation updates
 function simulateRadiation() {
@@ -60,5 +60,8 @@ function simulateRadiation() {
 updateRadiation(0);
 
 // Update the gauge every 2 minutes (120,000 milliseconds)
-const radiationInterval = setInterval(simulateRadiation, 1200);
+// const radiationInterval = setInterval(simulateRadiation, 120000);
+const radiationInterval = setInterval(updateRadiationFromAPI, 2000);
+updateRadiationFromAPI();
+
 

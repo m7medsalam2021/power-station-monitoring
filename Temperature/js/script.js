@@ -36,19 +36,35 @@ const temperatureGauge = new RadialGauge({
     animationRule: "bounce"
 }).draw();
 
-// Function to update the temperature gauge value
+// Function to update the flow gauge value
 function updateTemperature(value) {
     temperatureGauge.value = value;
 
-    // Check if temperature reaches 50°C
-    const temperatureWarningLight = document.getElementById('temperatureWarningLight');
-    if (value >= 50) {
-        temperatureWarningLight.classList.add('on');
+    // Check if flow reaches 75 L/min
+    const TemperatureWarningLight = document.getElementById('TemperatureWarningLight');
+    if (value >= 75) {
+        TemperatureWarningLight.classList.add('on');
         document.getElementById('controlButton').disabled = false;
     } else {
-        temperatureWarningLight.classList.remove('on');
+        TemperatureWarningLight.classList.remove('on');
+    }
+}   
+
+// Function to fetch data from API
+async function updateTemperatureFromAPI() {
+    try {
+        const value = await fetchSensorData(1);
+        if (value !== null) {
+            updateTemperature(value);
+        } else {
+            console.warn("Using simulated data");
+            updateTemperature(simulateValue(0, 100));
+        }
+    } catch (error) {
+        console.error("Failed to update Temperature:", error);
     }
 }
+
 
 // Simulate dynamic temperature updates
 function simulateTemperature() {
@@ -60,5 +76,7 @@ function simulateTemperature() {
 updateTemperature(0);
 
 // Update the gauge every 2 minutes (120,000 milliseconds)
-const temperatureInterval = setInterval(simulateTemperature, 1200);
+// const temperatureInterval = setInterval(simulateTemperature, 120000);
+const temperatureInterval = setInterval(updateTemperatureFromAPI, 2000);
+updateTemperatureFromAPI();
 

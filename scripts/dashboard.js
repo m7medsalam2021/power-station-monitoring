@@ -36,33 +36,60 @@ function calculateOverallValue(pressure, temperature, flow, humidity, radiation)
     return overallValue;
 }
 
-// Function to update the overall gauge
-function updateOverallGauge() {
-    // Simulate sensor values
-    const pressure = simulateValue(0, 100);
-    const temperature = simulateValue(0, 100);
-    const flow = simulateValue(0, 100);
-    const humidity = simulateValue(0, 100);
-    const radiation = simulateValue(0, 100);
+async function getRealTimeData() {
+    try {
+        const response = await fetch(`${API_BASE_URL}SensorData`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const allData = await response.json();
+        
+        // نفترض أن البيانات تأتي مصنفة حسب الـ Sensor IDs
+        const pressure = allData.find(d => d.sensorId === 3)?.value || 0;
+        const temperature = allData.find(d => d.sensorId === 1)?.value || 0;
+        const flow = allData.find(d => d.sensorId === 5)?.value || 0;
+        const humidity = allData.find(d => d.sensorId === 4)?.value || 0;
+        const radiation = allData.find(d => d.sensorId === 2)?.value || 0;
 
-    // Calculate the overall value
-    const overallValue = calculateOverallValue(pressure, temperature, flow, humidity, radiation);
-
-    // Update the overall gauge
-    overallGauge.value = overallValue;
-    document.getElementById('overallValue').textContent = overallValue.toFixed(2);
-
-    // Update the warning light
-    const overallWarningLight = document.getElementById('overallWarningLight');
-    if (overallValue >= 75) {
-        overallWarningLight.classList.add('on');
-    } else {
-        overallWarningLight.classList.remove('on');
+        return { pressure, temperature, flow, humidity, radiation };
+    } catch (error) {
+        console.error('Error fetching all sensors data:', error);
+        return null;
     }
 }
 
+// Function to update the overall gauge
+async function updateOverallGauge() {
+    const realData = await getRealTimeData();
+    
+    if (realData) {
+        const { pressure, temperature, flow, humidity, radiation } = realData;
+        const overallValue = calculateOverallValue(pressure, temperature, flow, humidity, radiation);
+        
+        overallGauge.value = overallValue;
+        document.getElementById('overallValue').textContent = overallValue.toFixed(2);
+    } else {
+        // استخدام البيانات المحاكاة إذا فشل الاتصال بالباك إند
+        const pressure = simulateValue(0, 100);
+        const temperature = simulateValue(0, 100);
+        const flow = simulateValue(0, 100);
+        const humidity = simulateValue(0, 100);
+        const radiation = simulateValue(0, 100);
+
+        const overallValue = calculateOverallValue(pressure, temperature, flow, humidity, radiation);
+        
+        overallGauge.value = overallValue;
+        document.getElementById('overallValue').textContent = overallValue.toFixed(2);
+    }
+
+    // تحديث لمبة التحذير
+    const overallWarningLight = document.getElementById('overallWarningLight');
+    overallWarningLight.classList.toggle('on', overallGauge.value >= 75);
+}
+
+
 // Simulate dynamic updates every 2 seconds
-setInterval(updateOverallGauge, 2000);
+setInterval(updateOverallGauge, 120000);
 
 // Initialize with default values
 updateOverallGauge();

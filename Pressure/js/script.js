@@ -36,18 +36,18 @@ const gauge = new RadialGauge({
 }).draw();
 
 // Function to update the gauge value
-function updateGauge(value) {
-    gauge.value = value;
-
-    // Check if pressure reaches 75 PSI
-    const warningLight = document.getElementById('warningLight');
-    if (value >= 75) {
-        warningLight.classList.add('on'); // Turn on the warning light
-        document.getElementById('controlButton').disabled = false; // Enable the button
+async function updatePressureFromAPI() {
+    const sensorId = 3; // ID سينسور الضغط في الباك إند
+    const value = await fetchSensorData(sensorId);
+    
+    if (value !== null) {
+        updateGauge(value);
     } else {
-        warningLight.classList.remove('on'); // Turn off the warning light
+        const simulatedValue = simulateValue(0, 100);
+        updateGauge(simulatedValue);
     }
 }
+
 
 // Simulate dynamic pressure updates
 function simulatePressure() {
@@ -59,5 +59,7 @@ function simulatePressure() {
 updateGauge(0);
 
 // Update the gauge every 2 minutes (120,000 milliseconds)
-const interval = setInterval(simulatePressure, 1200);
+// const interval = setInterval(simulatePressure, 120000);
+const pressureInterval = setInterval(updatePressureFromAPI, 2000);
+updatePressureFromAPI();
 

@@ -4,16 +4,16 @@ const flowGauge = new RadialGauge({
     renderTo: 'flowGauge',
     width: 300,
     height: 300,
-    units: "L/min", // وحدة القياس (لتر/دقيقة)
+    units: "L/min",
     minValue: 0,
     maxValue: 100,
     majorTicks: ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
     minorTicks: 5,
     strokeTicks: true,
     highlights: [
-        { from: 0, to: 50, color: "rgba(0, 200, 0, 0.5)" }, // Green zone
-        { from: 50, to: 75, color: "rgba(255, 255, 0, 0.5)" }, // Yellow zone
-        { from: 75, to: 100, color: "rgba(255, 0, 0, 0.5)" } // Red zone
+        { from: 0, to: 50, color: "rgba(0, 200, 0, 0.5)" },
+        { from: 50, to: 75, color: "rgba(255, 255, 0, 0.5)" },
+        { from: 75, to: 100, color: "rgba(255, 0, 0, 0.5)" }
     ],
     colorPlate: "#fff",
     colorMajorTicks: "#333",
@@ -48,17 +48,32 @@ function updateFlow(value) {
     } else {
         flowWarningLight.classList.remove('on');
     }
+}   
+
+// Function to fetch data from API
+async function updateFlowFromAPI() {
+    try {
+        const value = await fetchSensorData(5);
+        if (value !== null) {
+            updateFlow(value);
+        } else {
+            console.warn("Using simulated data");
+            updateFlow(simulateValue(0, 100));
+        }
+    } catch (error) {
+        console.error("Failed to update flow:", error);
+    }
 }
 
 // Simulate dynamic flow updates
 function simulateFlow() {
-    const flow = simulateValue(0, 100); // استخدام الوظيفة العامة
+    const flow = simulateValue(0, 100);
     updateFlow(flow);
 }
 
 // Initialize the gauge with a default value
 updateFlow(0);
 
-// Update the gauge every 2 minutes (120,000 milliseconds)
-const flowInterval = setInterval(simulateFlow, 1200);
-
+// Update the gauge every 2 seconds
+const flowInterval = setInterval(updateFlowFromAPI, 8000);
+updateFlowFromAPI();

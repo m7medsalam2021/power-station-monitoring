@@ -37,18 +37,18 @@ const humidityGauge = new RadialGauge({
 }).draw();
 
 // Function to update the humidity gauge value
-function updateHumidity(value) {
-    humidityGauge.value = value;
-
-    // Check if humidity reaches 75%
-    const humidityWarningLight = document.getElementById('humidityWarningLight');
-    if (value >= 75) {
-        humidityWarningLight.classList.add('on');
-        document.getElementById('controlButton').disabled = false;
+async function updateHumidityFromAPI() {
+    const sensorId = 4; // ID سينسور الرطوبة في الباك إند
+    const value = await fetchSensorData(sensorId);
+    
+    if (value !== null) {
+        updateHumidity(value);
     } else {
-        humidityWarningLight.classList.remove('on');
+        const simulatedValue = simulateValue(0, 100);
+        updateHumidity(simulatedValue);
     }
 }
+
 
 // Simulate dynamic humidity updates
 function simulateHumidity() {
@@ -60,11 +60,13 @@ function simulateHumidity() {
 updateHumidity(0);
 
 // Update the gauge every 2 minutes (120,000 milliseconds)
-const humidityInterval = setInterval(simulateHumidity, 1200);
+// const humidityInterval = setInterval(simulateHumidity, 120000);
+const humidityInterval = setInterval(updateHumidityFromAPI, 2000);
+updateHumidityFromAPI();
 
-// Control button logic
-document.getElementById('controlButton').addEventListener('click', () => {
-    clearInterval(humidityInterval);
-    alert("تم التحكم في الرطوبة!");
-    document.getElementById('controlButton').disabled = true;
-});
+// // Control button logic
+// document.getElementById('controlButton').addEventListener('click', () => {
+//     clearInterval(humidityInterval);
+//     alert("تم التحكم في الرطوبة!");
+//     document.getElementById('controlButton').disabled = true;
+// });
